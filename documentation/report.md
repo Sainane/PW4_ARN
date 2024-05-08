@@ -1,11 +1,22 @@
-# Report 
+# Practical Work 04 – Deep Neural Networks
+auhtors: Rachel Tranchida, Eva Ray
+
+## Introduction
+Dans ce laboratoire, nous allons en premier lieu explorer trois méthodes différentes pour classer des images de chiffres provenant du jeu de données MNIST : un MLP, un MLP à partir de l'histogramme des gradients (HOG) et un réseau neuronal convolutif (CNN). Dans une seconde partie, nous allons ensuite créer un autre CNN qui devra être capable de classifier des radios thoraciques entre "normal" et "pneumonie". Pour ce faire, nous allons travailler avec le framework `Keras`, qui est une bibliothèque d'outils liés aux réseaux de neuronea de haut niveau,  que nous avons déjà utilisé dans le laboratoire précédent. 
+
+## Buts Pédagogiques
+Les buts pédagogiques de ce laboratoire sont les suivants:
+- Développer une meilleure compréhension de la différence entre `shallow` et `deep` neural networks.
+- Comprendre les principes fondamentaux des réseaux de neurones convolutifs.
+- Apprendre les bases du framework `Keras`.
 
 ## Partie 1
 
 ### Quel est l'algorithme d'apprentissage utilisé pour optimiser les poids du réseau de neurones?
 L'algorithme utilisé pour optimisé les poids est `RMSprop`. RMSprop est un algorithme d'optimisation utilisé pour ajuster les poids d'un réseau de neurones. Il adapte les taux d'apprentissage des poids en utilisant une moyenne mobile des carrés des gradients précédents, ce qui permet une convergence plus rapide et une meilleure performance d'apprentissage.
-
-![alt text](image-8.png)
+<div style="text-align:center">
+    <img src="image-8.png" alt="drawing" style="width:300"/>
+</div>
 
 où:
 - E[g] est la moyenne mobile des gradients au carré
@@ -49,9 +60,11 @@ où :
 
 
 ## Partie 2
-### Raw data
+### Digit Recognition from Raw Data
+Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Chaque chiffre de la base de données est une image de 28x28 pixels. Il y a 10 classes différentes, qui sont les chiffres de 0 à 9.
 #### Modèle 1
-![alt text](image-1.png)
+
+##### Topologie du modèle
 
 ```python
 model = Sequential()
@@ -62,8 +75,10 @@ batch_size = 128
 n_epoch = 10
 ```
 
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_2"</span>
-</pre>
+##### Poids du modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -78,21 +93,39 @@ n_epoch = 10
 </pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
+
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (784 * 512) + 512 = 401'920
+- Pour la seconde couche (de sortie): (512 * 10) + 10 = 5'130
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 407'050 poids.
+
+
+##### Graphique de l'historique d'entraînement
+![alt text](image.png)
+
+##### Performances
 Test score: 0.09036532044410706
 
 Test accuracy: 0.972599983215332
 
-![alt text](image.png)
+![alt text](image-1.png)
 
 #### Modèle 2
-Test score: 0.07116231322288513
 
-Test accuracy: 0.9797999858856201
-![alt text](image-5.png)
+##### Topologie du modèle
 
-![alt text](image-4.png)
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_8"</span>
-</pre>
+```python
+batch_size = 32
+n_epoch = 20
+model = Sequential()
+model.add(Dense(512, input_shape=(784,), activation='sigmoid'))
+model.add(Dropout(0.5))
+model.add(Dense(n_classes, activation='softmax'))
+```
+##### Poids du modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
@@ -112,20 +145,44 @@ Test accuracy: 0.9797999858856201
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (784 * 512) + 512 = 401'920
+- La couche dropout ne possède pas de paramètres à entraîner.
+- Pour la seconde couche (de sortie): (512 * 10) + 10 = 5'130
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 407'050 poids.
+
+##### Graphique de l'Historique d'Entraînement
+
+![alt text](image-5.png)
+
+##### Performances
+
+Test score: 0.07116231322288513
+
+Test accuracy: 0.9797999858856201
+
+![alt text](image-4.png)
+
+#### Modèle 3
+
+##### Topologie du modèle
+
 ```python
-batch_size = 32
-n_epoch = 20
+batch_size = 128
+n_epoch = 30
 model = Sequential()
 model.add(Dense(512, input_shape=(784,), activation='sigmoid'))
 model.add(Dropout(0.5))
+model.add(Dense(256, activation="relu"))
+model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
-
-model.summary()
 ```
 
-#### Modèle 3
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_9"</span>
-</pre>
+##### Poids du modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -147,31 +204,46 @@ model.summary()
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (784 * 512) + 512 = 401'920
+- La première couche de dropout ne possède pas de paramètres à entraîner.
+- Pour la seconde couche: (512 * 256) + 256 = 131'328
+- La seconde couche de dropout ne possède pas de paramètres à entraîner.
+- Pour la troisième couche (de sortie): (256 * 10) + 10 = 2'570
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 535'818 poids.
+
+##### Graphique de l'historique d'entraînement
+![alt text](image-3.png)
+
+##### Performances
+
 Test score: 0.07027491182088852
 
 Test accuracy: 0.9817000031471252
-![alt text](image-3.png)
+
 
 ![alt text](image-2.png)
 
+### Digit recognition from features of the input data
+
+#### Modèle 1
+
+##### Topologie du Modèle
+
 ```python
 batch_size = 128
-n_epoch = 30
+n_epoch = 50
 model = Sequential()
-model.add(Dense(512, input_shape=(784,), activation='sigmoid'))
-model.add(Dropout(0.5))
-model.add(Dense(256, activation="relu"))
+model.add(Dense(64, input_shape=(hog_size,), activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
 ```
 
+##### Poids du modèle
 
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
-### HOG
-
-#### Modèle 1
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_2"</span>
-</pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -189,23 +261,45 @@ model.add(Dense(n_classes, activation='softmax'))
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (392 * 64) + 64 = 25'152, où hog_size = 392
+- La première couche de dropout ne possède pas de paramètres à entraîner.
+- Pour la seconde couche: (640 * 10) + 10 = 650
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 25'802 poids.
+
+##### Graphique de l'historique d'entraînement
+![alt text](image-6.png)
+
+##### Performances
+
+Test score: 0.09391739219427109
+
+Test accuracy: 0.9775999784469604
+
+![alt text](image-7.png)
+
+#### Modèle 2
+
+##### Topologie du Modèle
+
 ```python
 batch_size = 128
-n_epoch = 50
+n_epoch = 20
 model = Sequential()
 model.add(Dense(64, input_shape=(hog_size,), activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
 
-model.summary()
+n_orientations = 16
+pix_p_cell = 4
+hog_size = int(height * width * n_orientations / (pix_p_cell * pix_p_cell))// =784
 ```
-Test score: 0.09391739219427109
-Test accuracy: 0.9775999784469604
-![alt text](image-6.png)
-![alt text](image-7.png)
-#### Modèle 2
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_8"</span>
-</pre>
+
+##### Poids du modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -223,24 +317,73 @@ Test accuracy: 0.9775999784469604
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
-![alt text](image-9.png)
-![alt text](image-10.png)
-```python
-batch_size = 128
-n_epoch = 20
-model = Sequential()
-model.add(Dense(64, input_shape=(hog_size,), activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(n_classes, activation='softmax'))
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (784 * 64) + 64 = 50'240, où hog_size = 784
+- La première couche de dropout ne possède pas de paramètres à entraîner.
+- Pour la seconde couche: (640 * 10) + 10 = 650
 
-model.summary()
-n_orientations = 16
-pix_p_cell = 4
-hog_size = int(height * width * n_orientations / (pix_p_cell * pix_p_cell))
-```
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 50'890 poids.
+
+##### Graphique de l'historique d'entraînement
+
+![alt text](image-9.png)
+
+##### Performances
+Test score: 0.07377872616052628
+
+Test accuracy: 0.9793999791145325
+
+![alt text](image-10.png)
+
 #### Modèle 3
 
-#### CNN
+##### Topologie du Modèle
+
+##### Poids du Modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
+##### Graphique de l'historique d'entraînement
+
+##### Performances
+
+### Convolutional neural network digit recognition
+
+#### Modèle 1
+
+##### Topologie du Modèle
+
+##### Poids du Modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
+##### Graphique de l'historique d'entraînement
+
+##### Performances
+
+#### Modèle 2
+
+##### Topologie du Modèle
+
+##### Poids du Modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
+##### Graphique de l'historique d'entraînement
+
+##### Performances
+
+#### Modèle 4
+
+##### Topologie du Modèle
+
+##### Poids du Modèle
+
+Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
+
+##### Graphique de l'historique d'entraînement
+
+##### Performances
 
 ## Partie 3
 

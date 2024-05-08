@@ -66,6 +66,8 @@ Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les don
 
 ##### Topologie du modèle
 
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le premier modèle.
+
 ```python
 model = Sequential()
 model.add(Dense(512, input_shape=(784,), activation='sigmoid'))
@@ -74,6 +76,12 @@ model.add(Dense(n_classes, activation='softmax'))
 batch_size = 128
 n_epoch = 10
 ```
+
+Pour commencer, nous avons choisi d'ajouter des neurones dans la couche cachée en passant de 2 à 512, afin de donner une meilleure chance au modèle de capturer les motifs des données. Nous travaillons avec des images de chiffres, ce qui est une donnée relativement complexe donc un plus grand nombre de neurones a plus de chance de la comprendre. 
+
+Nous avons aussi augmenté le nombre d'epochs en passant de 3 à 10. Cela permet au modèle de passer par plus d'itérations d'apprentissage, ce qui peut améliorer sa capacité à converger vers une solution optimale. Ce choix est pertinent lorsque le modèle est plus complexe, comme dans notre cas avec 512 neurones dans la couche cachée.
+
+Nous avons choisi de ne pas ajouter de couche dopout pour l'instant car le modèle ne montre pas de signe d'overfitting avec les paramètres actuels.
 
 ##### Poids du modèle
 
@@ -98,7 +106,7 @@ Pour calculer ces poids manuellement, on peut procéder couche par couche.
 - Pour la première couche: (784 * 512) + 512 = 401'920
 - Pour la seconde couche (de sortie): (512 * 10) + 10 = 5'130
 
-Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 407'050 poids.
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous donne 407'050 poids.
 
 
 ##### Graphique de l'historique d'entraînement
@@ -110,6 +118,17 @@ Test score: 0.09036532044410706
 Test accuracy: 0.972599983215332
 
 ![alt text](image-1.png)
+
+##### Analyse
+
+Nous constatons sur notre training history plot que le nombre d'epochs est bien choisi pour ces paramètres car, bien que la courbe de training pourrait encore baisser, plus d'epochs amèneraient à de l'overfitting.
+
+Les performances du modèles sont très bonnes, avec une accuracy de 0.973. On peut supposer que le jeu de données est relativement facile à apprendre car c'est une très bonne accuracy pour seulement 10 epochs de training. On remarquera aussi que dans ce cas la mesure 'accuracy' est pertinente car le dataset est bien équilibré.
+
+En regardant la matrice de confusions, on constate qu'il y a certaines classes que le modèle confond particulièrement. En particulier, le modèle a du mal à différencier les classes 7 et 2, 9 et 4, 3 et 5. Cela semble pouvoir s'expliquer car ces chiffres se ressemblent à l'écrit et ont des particularités communes, ce qui les rend plus difficiles à différenencier pour le modèle.
+
+Nous allons essayer de corriger ces imprécisions dans le second modèle.
+
 
 #### Modèle 2
 
@@ -123,6 +142,11 @@ model.add(Dense(512, input_shape=(784,), activation='sigmoid'))
 model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
 ```
+
+Pour le second modèle, nous avons décidé d'ajouter une couche de dropout à 50%. En effet, nous avions constaté précedemment sur le training history plot que la courbe du training pouvait encore baisser mais que cela causerait de l'overfitting. Nous avons donc rajouté plus d'epochs en passant de 10 à 20 et nous espérons que la couche de dropout évitera l'overfitting. 
+
+Nous avons aussi décidé de descendre la batch size de 128 à 32. Avec une plus petite taille de batch, chaque mise à jour du modèle est basée sur un sous-ensemble plus restreint des données d'entraînement. Cela peut aider à diversifier les exemples présentés au modèle à chaque itération, ce qui peut l'aider à généraliser mieux sur les données de validation et de test. Nous espérons donc que cela va aider le modèle à distinguer mieux certaines classes.
+
 ##### Poids du modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
@@ -164,6 +188,14 @@ Test accuracy: 0.9797999858856201
 
 ![alt text](image-4.png)
 
+##### Analyse 
+
+Le training plot history est plutôt satisfaisant. Il aurait peut être fallu arrêter l'entraînement quelques epochs plus tôt car le modèle commence gentiment à overfitter. Le loss est plus bas que dans le modèle précédent, ce qui était notre but. On voit encore une fois que la courbe de training continue à descendre mais que dans notre cas continuer l'entraîenement plus longtemps causerait de l'overfitting.
+
+L'accuracy est d'environ 0.98. Ce chiffre est légèrement mieux que précédemment et est très bon en général. On notera que quand les accuracy sont aussi hautes, il devient difficile de continuer à les améliorer. 
+
+Lorsqu'on regarde la matrice de confusion, on constate que le modèle a toujours du mal à différencier les classes 7 et 2, 9 et 4, 3 et 5 mais qu'il y a un petit peu moins de faux négatifs qu'avant. En particulier, le second modèle semble mieux différencier les classes 3 et 5 que le premier modèle.
+
 #### Modèle 3
 
 ##### Topologie du modèle
@@ -178,6 +210,12 @@ model.add(Dense(256, activation="relu"))
 model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
 ```
+
+Pour le modèle final, nous avons décidé de remettre une batch size de 128 car nous n'avions pas été spécialement s des bénéfices d'une batch size de 32. 
+
+Nous avons décidé de rajouter une couche cachée de 256 neurones et de fonction d'activation `relu`, suivie d'une nouvelle couche de dropout à 50%. Nous espérons que rajouter une couche aide le modèle à apprendre la complexité des images plus en détails et à différencier les classes problématiques. 
+
+Comme nous avons vu dans le training plot history précédent, la courbe de training continuait de descendre. Nous avons donc rajouté des epochs et nous passons de 20 à 30 epochs. Les couches de dropout devraient éviter d'avoir trop d'overfitting.
 
 ##### Poids du modèle
 
@@ -222,8 +260,17 @@ Test score: 0.07027491182088852
 
 Test accuracy: 0.9817000031471252
 
-
 ![alt text](image-2.png)
+
+##### Analyse
+
+Le training history plot est très satisfaisant. Il n'y a pas d'overfitting avec 30 epochs pour ces paramètres. La courbe de training est très légèrement encore en train de descendre mais bien moins qu'avant. 
+
+L'accuracy est de 0.982, ce qui est la meilleure accuracy que nous avons eue jusqu'à présent. C'est une très bonne accuracy.
+
+On constate dans la matrice de confusion que le modèle a toujours du mal avec les classes 4 et 9. Il fait aussi encore des erreurs d'identification entre les classes 2 et 7, 3 et 5 mais nettement moins qu'avec les autres modèles. Il serait bien sûr toujours possible d'améliorer ce modèle.
+
+Ce dernier modèle est le modèle sélectionné pour la première expérience.
 
 ### Digit recognition from features of the input data
 
@@ -278,6 +325,8 @@ Test score: 0.09391739219427109
 Test accuracy: 0.9775999784469604
 
 ![alt text](image-7.png)
+
+##### Analyse
 
 #### Modèle 2
 

@@ -420,13 +420,71 @@ Lorsqu'on regarde la matrice de confusion, on constate que ce sont les mêmes cl
 
 ##### Topologie du Modèle
 
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le troisième modèle.
+
+```python
+batch_size = 256
+n_epoch = 10
+n_orientations = 16
+pix_p_cell = 4
+hog_size = int(height * width * n_orientations / (pix_p_cell * pix_p_cell))
+model = Sequential()
+model.add(Dense(128, input_shape=(hog_size,), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(n_classes, activation='softmax'))
+```
+
+Nous avons ajouté des neurones dans la couche cachée en passant de 64 à 128 pour donner une meilleure chance au modèle de comprendre la complexité des données. Nous avons aussi augmenté la batch size de 128 à 256 pour la même raison.
+
+En contrepartie, nous avons baissé le nombre d'epochs de 20 à 10 pour minimiser l'overfitting.
+
 ##### Poids du Modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense_19 (Dense)            (None, 128)               100480    
+                                                                 
+ dropout_9 (Dropout)         (None, 128)               0         
+                                                                 
+ dense_20 (Dense)            (None, 10)                1290      
+                                                                 
+=================================================================
+Total params: 101,770
+Trainable params: 101,770
+Non-trainable params: 0
+_________________________________________________________________
+
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+- Pour la première couche: (784 * 128) + 128 = 100'480, où hog_size = 784
+- La première couche de dropout ne possède pas de paramètres à entraîner.
+- Pour la seconde couche: (128 * 10) + 10 = 1290
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 101'770 poids.
+
 ##### Graphique de l'historique d'entraînement
 
+![alt text](image-11.png)
+
 ##### Performances
+
+Test score: 0.061707451939582825
+
+Test accuracy: 0.9807999730110168
+
+![alt text](image-12.png)
+
+##### Analyse
+
+En regardant le le training history plot, nous constatons que l'entraînement s'est arrêté à temps pour qu'il n'y ait pas d'overfitting. La courbe de training est encore légèrement en train de descendre et aurait pu bénéficier de quelques epochs d'entraînement en plus.
+
+L'accuracy est de 0.981, ce qui est une très bonne accuracy et la meilleure que nous avons eue pour la seconde expérience. Ceci dit, cette accuracy, bien que meilleure, reste très proche de celle des autres modèles.
+
+Lorsqu'on regarde la matrice de confusion, on constate que le modèle semble un peu meilleure que le précédent pour distinguer les classes problématiques. En effet, les nombres de faux négatifs sont un peu plus bas. Ceci dit, les classes qui sont le plus difficiles à distinguer restent 3 et 8, 3 et 5, 4 et 9, 7 et 9.
+
+Ce modèle est le meilleur que nous avons créé pour la deuxième expérience, c'est donc celui-ci que nous sélectionnons. 
 
 ### Convolutional neural network digit recognition
 

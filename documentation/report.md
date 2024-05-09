@@ -134,6 +134,8 @@ Nous allons essayer de corriger ces imprécisions dans le second modèle.
 
 ##### Topologie du modèle
 
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le second modèle.
+
 ```python
 batch_size = 32
 n_epoch = 20
@@ -199,6 +201,8 @@ Lorsqu'on regarde la matrice de confusion, on constate que le modèle a toujours
 #### Modèle 3
 
 ##### Topologie du modèle
+
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le troisième modèle.
 
 ```python
 batch_size = 128
@@ -273,10 +277,14 @@ On constate dans la matrice de confusion que le modèle a toujours du mal avec l
 Ce dernier modèle est le modèle sélectionné pour la première expérience.
 
 ### Digit recognition from features of the input data
+Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Cette fois, au lieu d'utiliser les images de 28x28 pixels comme inputs, nous calculons 
+les caractéristiques de l'histogramme des gradients (HOG) de parties de l'image et utilisons ces caractéristiques comme inputs pour le réseau de neurones.
 
 #### Modèle 1
 
 ##### Topologie du Modèle
+
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le premier modèle.
 
 ```python
 batch_size = 128
@@ -286,6 +294,10 @@ model.add(Dense(64, input_shape=(hog_size,), activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(n_classes, activation='softmax'))
 ```
+
+Pour commencer, nous avons choisi d'augmenter le nombre de neurones dans la couche cachée en passant de 2 à 64, afin de donner une chance au modèle de mieux appréhender les données. 
+
+Nous avons aussi augmenté le nombre d'epochs de 3 à 50 et avons donc aussi ajouté une couche de dropout pour minimiser l'overfitting.
 
 ##### Poids du modèle
 
@@ -328,9 +340,17 @@ Test accuracy: 0.9775999784469604
 
 ##### Analyse
 
+Nous constatons que le training history plot est plutôt correct. Il n'y a pas d'overfitting. On constate que la courbe de training a peu baissé pendant les 10 à 20 dernières époques donc nous aurions pu potentiellement arrêter le training plus tôt. 
+
+L'accuracy est d'environ 0.978, ce qui est très bon. En regardant la matrice de confusion, on constate que le modèle a, comme pour la première expérience, du mal à distinguer certaines classes. En particulier, le modèle confond souvent les classes 5 et 3, 4 et 9, comme dans la première expérience mais aussi 7 et 9, 3 et 8 qui ne posaient pas particulièrement de problèmes lors de la première expérience. Les descripteurs HOG sont conçus pour être invariants à certaines transformations telles que la translation, l'échelle et la rotation. Cela peut rendre le modèle moins sensible à ces variations dans les données d'entrée, ce qui pourrait contribuer à une différence de classification pour certaines classes, en comparaison avec la première expérience.
+
+On remarque aussi qu'en utilisant le HOG, le modèle n'a pas de mal à distinguer les classes 2 et 7 qui posaient problème en utilisant les images brutes. Il est possible que les caractéristiques extraites par le HOG aient permis au modèle de mieux distinguer ces deux classes. 
+
 #### Modèle 2
 
 ##### Topologie du Modèle
+
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le second modèle.
 
 ```python
 batch_size = 128
@@ -342,8 +362,12 @@ model.add(Dense(n_classes, activation='softmax'))
 
 n_orientations = 16
 pix_p_cell = 4
-hog_size = int(height * width * n_orientations / (pix_p_cell * pix_p_cell))// =784
+hog_size = int(height * width * n_orientations / (pix_p_cell * pix_p_cell)) // =784
 ```
+
+Par rapport au premier modèle, nous avons réduit le nombre d'epoques, vu que la courbe de training du traininh history plot du premier modèle semblait stagner sur les dernières époques.
+
+Nous avons aussi changé le nombre d'orientations en passant de 8 à 16, dans l'espoir que cela permette au HOG de capturer plus de détails dans les contours de l'image et que le modèle ait moins de mal à distinguer les classes problématiques.
 
 ##### Poids du modèle
 
@@ -383,6 +407,14 @@ Test score: 0.07377872616052628
 Test accuracy: 0.9793999791145325
 
 ![alt text](image-10.png)
+
+##### Analyse
+
+Le training history plot est satisfaisant. Le trianing s'arrête avant d'overfitter et la courbe de training semble commencer à stagner donc ajouter des époques ne semble pas nécessaire.
+
+L'accuracy est d'environ 0.979, ce qui est très bien. Cependant, cette accuracy est quasiment identique à celle du premier modèle, ce qui implique qu'ajouter des orientations au HOG n'a potentiellement pas beaucoup aidé le modèle à différencier les classes problématiques. 
+
+Lorsqu'on regarde la matrice de confusion, on constate que ce sont les mêmes classe qui sont difficiles à distinguer que pour le premier modèle mais que le nombre de faux négatif est un tout petit peu plus bas.
 
 #### Modèle 3
 

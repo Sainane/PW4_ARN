@@ -54,10 +54,9 @@ L'équation de la fonction de loss `categorical_crossentropy` est
 L = - ∑(y * log(y_pred))
 ```
 où :
-- L est la perte (loss) calculée pour un échantillon donné,
-- y représente les valeurs cibles réelles (sous forme d'un vecteur codé à chaud ou "one-hot"),
+- L est la perte (loss) calculée pour un échantillon donné
+- y représente les valeurs cibles réelles (sous forme d'un vecteur "one-hot")
 - y_pred représente les probabilités prédites par le modèle pour chaque classe (également sous forme d'un vecteur).
-
 
 ## Partie 2
 ### Digit Recognition from Raw Data
@@ -494,7 +493,7 @@ Dans cet exercice, nous allons entraîner un réseau de neurones convolutif capa
 
 ##### Topologie du Modèle
 
-Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le second modèle.
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le premier modèle.
 
 ```python
 batch_size = 128
@@ -553,35 +552,35 @@ _________________________________________________________________
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
 
 - Couche de convolution l1 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
-    Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
-    Nombre total de poids : 32 * 5 = 160
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
+    - Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
+    - Nombre total de poids : 32 * 5 = 160
 
 - Couche de convolution l2 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
-    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
-    Nombre total de poids : 32 * 129 = 4128
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
+    - Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    - Nombre total de poids : 32 * 129 = 4128
 
 - Couche de convolution l3 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
-    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
-    Nombre total de poids : 32 * 129 = 4128
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
+    - Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    - Nombre total de poids : 32 * 129 = 4128
 
 - Couche dense l4 :
-    Nombre de neurones : 64
-    Taille de l'entrée aplatie : 14 * 14 * 32 = 6272 
-    Nombre de poids : (6272 * 64) + 64 (biais) = 401'472
+    - Nombre de neurones : 64
+    - Taille de l'entrée aplatie : 14 * 14 * 32 = 6272 
+    - Nombre de poids : (6272 * 64) + 64 (biais) = 401'472
 
 - Couche dense l5 :
-    Nombre de neurones : 10 (nombre de classes dans le problème de classification)
-    Taille de l'entrée : 64 (sortie de la couche l4)
-    Nombre de poids : (64 * 10) + 10 (biais) = 650
+    - Nombre de neurones : 10 (nombre de classes dans le problème de classification)
+    - Taille de l'entrée : 64 (sortie de la couche l4)
+    - Nombre de poids : (64 * 10) + 10 (biais) = 650
 
 
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 410'538 poids.
@@ -600,11 +599,21 @@ Test accuracy: 0.9872000217437744
 
 ##### Analyse
 
+Le training history plot est assez bon. On constate que le modèle commence légèrement à overfitter. Le courbe de training est encore en train de descendre mais continuer l'entraînement aurait agravé l'overfitting. 
+
+L'accuracy est de 0.987, ce qui est excellent. On constate dès le premier modèle qu'un CNN semble mieux appréhender les détails du jeu de données car cette accuracy est meilleure que celles des modèles sélectionnés pour la première et la seconde expérience.
+
+Lorsqu'on observe la matrice de confusion, on constate que le modèle semble avoir du mal à différencier les classes 2 et 7, qui posaient déjà problème dans la première expérience. Il y aussi un nombre relativement élévé de faux négatifs pour les classes 8 et 2. Aucun autre couple de classe ne semble être spécialement difficile à départager pour le modèle. Cette observation diffère des expériences précédentes. En effet, le modèle semble moins confondre des classes en particulier que ceux des expériences précédentes. Cela vient probablement du fait que le CNN choisit lui-même les features d'intérêt pour départager les classes et qu'il est très bon dans cette tâche!
+
 #### Modèle 2
 
 ##### Topologie du Modèle
 
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le second modèle.
+
 ```python
+batch_size = 128
+n_epoch = 5
 l0 = Input(shape=(height, width, 1), name='l0')
 
 l1 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l1')(l0)
@@ -625,6 +634,8 @@ l5 = Dense(n_classes, activation='softmax', name='l5')(l4_drop)
 
 model = Model(inputs=l0, outputs=l5)
 ```
+
+Dans ce second modèle, nous avons augmenté le nombre de neurones de la couche cachée de 64 à 128 pour que le modèle puisse mieux apprendre les complexités du jeu de données. Nous avons aussi ajouté une couche de dopout à 0.5 pour minimiser l'overfitting. Finalement, nous avons entraîné le modèle pendant 5 epochs, puisque dans la training history plot précédent, la courbe du training semblait pouvoir encore descendre. 
 
 ##### Poids du Modèle
 
@@ -661,38 +672,38 @@ _________________________________________________________________
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
 
 - Couche de convolution l1 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
-    Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
-    Nombre total de poids : 32 * 5 = 160
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
+    - Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
+    - Nombre total de poids : 32 * 5 = 160
 
 - Couche de convolution l2 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
-    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
-    Nombre total de poids : 32 * 129 = 4128
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
+    - Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    - Nombre total de poids : 32 * 129 = 4128
 
 - Couche de convolution l3 :
-    Nombre de filtres : 32
-    Taille des filtres : (2, 2)
-    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
-    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
-    Nombre total de poids : 32 * 129 = 4128
+    - Nombre de filtres : 32
+    - Taille des filtres : (2, 2)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
+    - Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    - Nombre total de poids : 32 * 129 = 4128
 
 - Couche dense l4 :
-    Nombre de neurones : 128
-    Taille de l'entrée aplatie : 14x14x32 = 6272
-    Nombre de poids : (6272 * 128) + 128 (biais) = 802'944
+    - Nombre de neurones : 128
+    - Taille de l'entrée aplatie : 14x14x32 = 6272
+    - Nombre de poids : (6272 * 128) + 128 (biais) = 802'944
 
 - Couche Dropout l4_drop :
-    Cette couche ne possède pas de paramètres à entraîner.
+    - Cette couche ne possède pas de paramètres à entraîner.
 
 - Couche dense l5 :
-    Nombre de neurones : 10 (nombre de classes dans le problème de classification)
-    Taille de l'entrée : 128 (sortie de la couche l4_drop)
-    Nombre de poids : (128 * 10) + 10 (biais) = 1290
+    - Nombre de neurones : 10 (nombre de classes dans le problème de classification)
+    - Taille de l'entrée : 128 (sortie de la couche l4_drop)
+    - Nombre de poids : (128 * 10) + 10 (biais) = 1290
 
 
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 812'650 poids.
@@ -711,11 +722,21 @@ Test accuracy: 0.988099992275238
 
 ##### Analyse
 
+Le training history plot est très satisfaisant. Il n'y a pas d'overfitting et la courbe de training commence à se stabiliser donc l'entraînement n'aurait pas eu besoin de durer plus longtemps.
+
+L'accuracy est de 0.988, ce qui est excellent. C'est très légèrement au-dessus de l'accuracy du second modèle.
+
+Lorsqu'on regarde la matrice de confusion, on constate que le modèle a de nouveau du mal à distinguer les classes 7 et 2. Le problème de distinction entre les classes 8 et 2 a disparu. Ce modèle a probablement choisi des features différentes du modèle précédent pour classifier les chiffres, ce qui peut expliquer cette différence. D'ailleurs, tout du moins d'un point de vue humain, les chiffres 2 et 8 ne se ressemble pas beaucoup. On arrive donc facilement à imaginer que si un modèle confond ces deux classes, c'est plus par un choix malheureux de features que de réelle ressemblance.
+
 #### Modèle 3
 
 ##### Topologie du Modèle
 
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le troisième modèle.
+
 ```python
+batch_size = 128
+n_epoch = 4
 l0 = Input(shape=(height, width, 1), name='l0')
 
 l1 = Conv2D(32, (5, 5), padding='same', activation='relu', name='l1')(l0)
@@ -736,6 +757,8 @@ l5 = Dense(n_classes, activation='softmax', name='l5')(l4_drop)
 
 model = Model(inputs=l0, outputs=l5)
 ```
+
+Pour ce dernier modèle, nous avons décidé d'augmenter la taille des filtres de 2x2 à 5x5, afin de potentiellement capturer des carctéristiques plus larges. Nous avons aussi entraîné le modèle pendant seulement 4 époques et plus 5, pour essayer de minimiser l'overfitting.
 
 ##### Poids du Modèle
 
@@ -768,11 +791,45 @@ Trainable params: 856,330
 Non-trainable params: 0
 _________________________________________________________________
 
-
-
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
 
-Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 812'650 poids.
+
+
+- Couche de convolution l1 :
+    - Nombre de filtres : 32
+    - Taille des filtres : (5, 5)
+    - Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
+    - Nombre de poids par filtre : (5 * 5 * 1) + 1 (biais) = 26
+    - Nombre total de poids : 32 * 26 = 832
+
+- Couche de convolution l2 :
+    - Nombre de filtres : 32
+    - Taille des filtres : (5, 5)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
+    - Nombre de poids par filtre : (5 * 5 * 32) + 1 (biais) = 801
+    - Nombre total de poids : 32 * 801 = 25,632
+
+- Couche de convolution l3 :
+    - Nombre de filtres : 32
+    - Taille des filtres : (5, 5)
+    - Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
+    - Nombre de poids par filtre : (5 * 5 * 32) + 1 (biais) = 801
+    - Nombre total de poids : 32 * 801 = 25,632
+
+- Couche dense l4 :
+    - Nombre de neurones : 128
+    - Taille de l'entrée aplatie : 14 * 14 * 32 = 6272
+    - Nombre de poids : (6272 * 128) + 128 (biais) = 802944
+
+- Couche Dropout l4_drop :
+Cette couche ne possède pas de paramètres à entraîner.
+
+- Couche dense l5 :
+    - Nombre de neurones : 10
+    - Taille de l'entrée : 128 (sortie de la couche l4_drop)
+    - Nombre de poids : (128 * 10) + 10 (biais) = 1290
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 856,330 poids.
 
 ##### Graphique de l'historique d'entraînement
 
@@ -786,10 +843,21 @@ Test accuracy: 0.9921000003814697
 
 ![alt text](image-20.png)
 
+##### Analyse
+Comme pour le modèle précédent, le training history plot est très bon. Il n'y a pas d'overfitting. La courbe de training est encore en train de baisser légèrement mais entraîner le modèle plus longtemps aurait amené de l'overfitting.
+
+L'accuracy de ce modèle est de 0.992, ce qui est absolument excellent! C'est légèrement au-dessus du second modèle et c'est un score proche des 100%, qu'il est difficile d'améliorer. 
+
+Lorsqu'on observe la matrice de confusion, on constate que le modèle a confondu plusieurs fois les classes 4 et 9, 5 et 3. Il est intéressant d'observer que ce ne sont pas les mêmes classes qui étaient confondues dans le modèle précédent. Cette différence provient sûrement des différentes features choisies par les modèles pour classifier les données, qui doivent varier d'un modèle à l'autre. On notera aussi un nombre impressionant de 0 hors de la diagonale, qui implique que certaines classes n'ont jamais été confondues. D'une manière générale, cette matrice de confusion est excellente! Il y a vraiment peu de données mal classées.
+
+Nous constatons que, sur le jeu de données MNIST, les modèles de réseaux de neurons convolutifs ont l'air de produire de meilleurs résultats que les modèles shallow. Cela vient probablement du fait que les CNN sont particulièrement efficaces pour extraire les caractéristiques pertinentes des images.
+
+Ce modèle est le meilleur que nous ayons eu, toutes expériences condondues et c'est celui que nous retenons pour la troisième expérience.
+
 ## Partie 3
 
 ### Les modèles CNN sont plus profonds (ont plus de couches), ont-ils plus de poids que les modèles shallow?
-En général, les réseaux de neurones convolutifs (CNN) plus profonds ont tendance à avoir plus de poids que les modèles shallow. Cela est dû au fait que les CNN plus profonds ont généralement un plus grand nombre de couches, et chaque couche est composée de plusieurs filtres qui contiennent des poids.
+En général, les réseaux de neurones convolutifs plus profonds ont tendance à avoir plus de poids que les modèles shallow. Cela est dû au fait que les CNN plus profonds ont généralement un plus grand nombre de couches, et chaque couche est composée de plusieurs filtres qui contiennent des poids.
 
 ### Exemple
 # A VERIFIER CEST FAIT PAR CLAUDE

@@ -488,41 +488,303 @@ Ce modèle est le meilleur que nous avons créé pour la deuxième expérience, 
 
 ### Convolutional neural network digit recognition
 
+Dans cet exercice, nous allons entraîner un réseau de neurones convolutif capable de déterminer automatiquement les features pertinentes pour reconnaître les chiffre de 0 à 9.
+
 #### Modèle 1
 
 ##### Topologie du Modèle
+
+Vous trouvez ci-dessous les paramètres que nous avons choisi d'utiliser pour le second modèle.
+
+```python
+batch_size = 128
+n_epoch = 3
+l0 = Input(shape=(height, width, 1), name='l0')
+
+l1 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l1')(l0)
+l1_mp = MaxPooling2D(pool_size=(2, 2), name='l1_mp')(l1)
+
+l2 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l2')(l1)
+l2_mp = MaxPooling2D(pool_size=(2, 2), name='l2_mp')(l2)
+
+l3 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l3')(l2)
+l3_mp = MaxPooling2D(pool_size=(2, 2), name='l3_mp')(l3)
+
+flat = Flatten(name='flat')(l3_mp)
+
+l4 = Dense(64, activation='relu', name='l4')(flat)
+l5 = Dense(n_classes, activation='softmax', name='l5')(l4)
+
+model = Model(inputs=l0, outputs=l5)
+```
+
+Pour ce premier modèle, nous avons décidé d'augmenter le nombre de filtres de 2 à 32 et le nombre de neurones dans la couche cachée de 2 à 64 pour extraire les caractérsitiques plus complexes des données.
 
 ##### Poids du Modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
+Model: "model_1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ l0 (InputLayer)             [(None, 28, 28, 1)]       0         
+                                                                 
+ l1 (Conv2D)                 (None, 28, 28, 32)        160       
+                                                                 
+ l2 (Conv2D)                 (None, 28, 28, 32)        4128      
+                                                                 
+ l3 (Conv2D)                 (None, 28, 28, 32)        4128      
+                                                                 
+ l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
+                                                                 
+ flat (Flatten)              (None, 6272)              0         
+                                                                 
+ l4 (Dense)                  (None, 64)                401472    
+                                                                 
+ l5 (Dense)                  (None, 10)                650       
+                                                                 
+=================================================================
+Total params: 410,538
+Trainable params: 410,538
+Non-trainable params: 0
+_________________________________________________________________
+
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+
+- Couche de convolution l1 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
+    Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
+    Nombre total de poids : 32 * 5 = 160
+
+- Couche de convolution l2 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
+    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    Nombre total de poids : 32 * 129 = 4128
+
+- Couche de convolution l3 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
+    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    Nombre total de poids : 32 * 129 = 4128
+
+- Couche dense l4 :
+    Nombre de neurones : 64
+    Taille de l'entrée aplatie : 14 * 14 * 32 = 6272 
+    Nombre de poids : (6272 * 64) + 64 (biais) = 401'472
+
+- Couche dense l5 :
+    Nombre de neurones : 10 (nombre de classes dans le problème de classification)
+    Taille de l'entrée : 64 (sortie de la couche l4)
+    Nombre de poids : (64 * 10) + 10 (biais) = 650
+
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 410'538 poids.
+
 ##### Graphique de l'historique d'entraînement
 
+![alt text](image-13.png)
+
 ##### Performances
+
+Test score: 0.04008874669671059
+
+Test accuracy: 0.9872000217437744
+
+![alt text](image-14.png)
+
+##### Analyse
 
 #### Modèle 2
 
 ##### Topologie du Modèle
 
+```python
+l0 = Input(shape=(height, width, 1), name='l0')
+
+l1 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l1')(l0)
+l1_mp = MaxPooling2D(pool_size=(2, 2), name='l1_mp')(l1)
+
+l2 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l2')(l1)
+l2_mp = MaxPooling2D(pool_size=(2, 2), name='l2_mp')(l2)
+
+l3 = Conv2D(32, (2, 2), padding='same', activation='relu', name='l3')(l2)
+l3_mp = MaxPooling2D(pool_size=(2, 2), name='l3_mp')(l3)
+
+flat = Flatten(name='flat')(l3_mp)
+
+l4 = Dense(128, activation='relu', name='l4')(flat)
+l4_drop = Dropout(0.5)(l4)
+
+l5 = Dense(n_classes, activation='softmax', name='l5')(l4_drop)
+
+model = Model(inputs=l0, outputs=l5)
+```
+
 ##### Poids du Modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
+Model: "model_10"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ l0 (InputLayer)             [(None, 28, 28, 1)]       0         
+                                                                 
+ l1 (Conv2D)                 (None, 28, 28, 32)        160       
+                                                                 
+ l2 (Conv2D)                 (None, 28, 28, 32)        4128      
+                                                                 
+ l3 (Conv2D)                 (None, 28, 28, 32)        4128      
+                                                                 
+ l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
+                                                                 
+ flat (Flatten)              (None, 6272)              0         
+                                                                 
+ l4 (Dense)                  (None, 128)               802944    
+                                                                 
+ dropout_7 (Dropout)         (None, 128)               0         
+                                                                 
+ l5 (Dense)                  (None, 10)                1290      
+                                                                 
+=================================================================
+Total params: 812,650
+Trainable params: 812,650
+Non-trainable params: 0
+_________________________________________________________________
+
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+
+- Couche de convolution l1 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 1 (images en niveaux de gris)
+    Nombre de poids par filtre : (2 * 2 * 1) + 1 (biais) = 5
+    Nombre total de poids : 32 * 5 = 160
+
+- Couche de convolution l2 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l1)
+    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    Nombre total de poids : 32 * 129 = 4128
+
+- Couche de convolution l3 :
+    Nombre de filtres : 32
+    Taille des filtres : (2, 2)
+    Profondeur des filtres (canaux d'entrée) : 32 (sortie de la couche l2)
+    Nombre de poids par filtre : (2 * 2 * 32) + 1 (biais) = 129
+    Nombre total de poids : 32 * 129 = 4128
+
+- Couche dense l4 :
+    Nombre de neurones : 128
+    Taille de l'entrée aplatie : 14x14x32 = 6272
+    Nombre de poids : (6272 * 128) + 128 (biais) = 802'944
+
+- Couche Dropout l4_drop :
+    Cette couche ne possède pas de paramètres à entraîner.
+
+- Couche dense l5 :
+    Nombre de neurones : 10 (nombre de classes dans le problème de classification)
+    Taille de l'entrée : 128 (sortie de la couche l4_drop)
+    Nombre de poids : (128 * 10) + 10 (biais) = 1290
+
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 812'650 poids.
+
 ##### Graphique de l'historique d'entraînement
+
+![alt text](image-15.png)
 
 ##### Performances
 
-#### Modèle 4
+Test score: 0.0349692776799202
+
+Test accuracy: 0.988099992275238
+
+![alt text](image-16.png)
+
+##### Analyse
+
+#### Modèle 3
 
 ##### Topologie du Modèle
 
+```python
+l0 = Input(shape=(height, width, 1), name='l0')
+
+l1 = Conv2D(32, (5, 5), padding='same', activation='relu', name='l1')(l0)
+l1_mp = MaxPooling2D(pool_size=(2, 2), name='l1_mp')(l1)
+
+l2 = Conv2D(32, (5, 5), padding='same', activation='relu', name='l2')(l1)
+l2_mp = MaxPooling2D(pool_size=(2, 2), name='l2_mp')(l2)
+
+l3 = Conv2D(32, (5, 5), padding='same', activation='relu', name='l3')(l2)
+l3_mp = MaxPooling2D(pool_size=(2, 2), name='l3_mp')(l3)
+
+flat = Flatten(name='flat')(l3_mp)
+
+l4 = Dense(128, activation='relu', name='l4')(flat)
+l4_drop = Dropout(0.5)(l4)
+
+l5 = Dense(n_classes, activation='softmax', name='l5')(l4_drop)
+
+model = Model(inputs=l0, outputs=l5)
+```
+
 ##### Poids du Modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ l0 (InputLayer)             [(None, 28, 28, 1)]       0         
+                                                                 
+ l1 (Conv2D)                 (None, 28, 28, 32)        832       
+                                                                 
+ l2 (Conv2D)                 (None, 28, 28, 32)        25632     
+                                                                 
+ l3 (Conv2D)                 (None, 28, 28, 32)        25632     
+                                                                 
+ l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
+                                                                 
+ flat (Flatten)              (None, 6272)              0         
+                                                                 
+ l4 (Dense)                  (None, 128)               802944    
+                                                                 
+ dropout_9 (Dropout)         (None, 128)               0         
+                                                                 
+ l5 (Dense)                  (None, 10)                1290      
+                                                                 
+=================================================================
+Total params: 856,330
+Trainable params: 856,330
+Non-trainable params: 0
+_________________________________________________________________
+
+
+
+Pour calculer ces poids manuellement, on peut procéder couche par couche.
+
+Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 812'650 poids.
+
 ##### Graphique de l'historique d'entraînement
 
+![alt text](image-19.png)
+
 ##### Performances
+
+Test score: 0.02639828249812126
+
+Test accuracy: 0.9921000003814697
+
+![alt text](image-20.png)
 
 ## Partie 3
 

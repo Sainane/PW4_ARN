@@ -2,7 +2,7 @@
 auhtors: Rachel Tranchida, Eva Ray
 
 ## Introduction
-Dans ce laboratoire, nous allons en premier lieu explorer trois méthodes différentes pour classer des images de chiffres provenant du jeu de données MNIST : un MLP, un MLP à partir de l'histogramme des gradients (HOG) et un réseau neuronal convolutif (CNN). Dans une seconde partie, nous allons ensuite créer un autre CNN qui devra être capable de classifier des radios thoraciques entre "normal" et "pneumonie". Pour ce faire, nous allons travailler avec le framework `Keras`, qui est une bibliothèque d'outils liés aux réseaux de neuronea de haut niveau,  que nous avons déjà utilisé dans le laboratoire précédent. 
+Dans ce laboratoire, nous allons en premier lieu explorer trois méthodes différentes pour classer des images de chiffres provenant du jeu de données MNIST : un MLP, un MLP à partir de l'histogramme des gradients (HOG) et un réseau neuronal convolutif (CNN). Dans une seconde partie, nous allons ensuite créer un autre CNN qui devra être capable de classifier des radios thoraciques entre "normal" et "pneumonie". Pour ce faire, nous allons travailler avec le framework `Keras`, qui est une bibliothèque d'outils liés aux réseaux de neurones de haut niveau,  que nous avons déjà utilisé dans le laboratoire précédent. 
 
 ## Buts Pédagogiques
 Les buts pédagogiques de ce laboratoire sont les suivants:
@@ -13,7 +13,7 @@ Les buts pédagogiques de ce laboratoire sont les suivants:
 ## Partie 1
 
 ### Quel est l'algorithme d'apprentissage utilisé pour optimiser les poids du réseau de neurones?
-L'algorithme utilisé pour optimisé les poids est `RMSprop`. RMSprop est un algorithme d'optimisation utilisé pour ajuster les poids d'un réseau de neurones. Il adapte les taux d'apprentissage des poids en utilisant une moyenne mobile des carrés des gradients précédents, ce qui permet une convergence plus rapide et une meilleure performance d'apprentissage.
+L'algorithme utilisé pour optimiser les poids est `RMSprop`. RMSprop est un algorithme d'optimisation utilisé pour ajuster les poids d'un réseau de neurones. Il adapte les taux d'apprentissage des poids en utilisant une moyenne mobile des carrés des gradients précédents, ce qui permet une convergence plus rapide et une meilleure performance d'apprentissage.
 <div style="text-align:center">
     <img src="image-8.png" alt="drawing" style="width:300"/>
 </div>
@@ -60,7 +60,9 @@ où :
 
 ## Partie 2
 ### Digit Recognition from Raw Data
-Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Chaque chiffre de la base de données est une image de 28x28 pixels. Il y a 10 classes différentes, qui sont les chiffres de 0 à 9.
+Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Chaque chiffre de la base de données est une image de 28x28 pixels. Il y a 10 classes différentes, qui sont les chiffres de 0 à 9. 
+
+Tous les modèles ci-dessous utilisent les pixels d'images de taille 28x28 en tant qu'input, ce qui représente une taille d'input de 784. Les sorties possibles sont les chiffres de 0 à 9, ce qui correspond à une taille d'output de 10.  
 #### Modèle 1
 
 ##### Topologie du modèle
@@ -85,7 +87,6 @@ Nous avons choisi de ne pas ajouter de couche dopout pour l'instant car le modè
 ##### Poids du modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -107,16 +108,23 @@ Pour calculer ces poids manuellement, on peut procéder couche par couche.
 
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous donne 407'050 poids.
 
-
 ##### Graphique de l'historique d'entraînement
-![alt text](image.png)
+
+<div style="text-align:center">
+    <img src="image.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 Test score: 0.09036532044410706
 
 Test accuracy: 0.972599983215332
 
-![alt text](image-1.png)
+<div style="text-align:center">
+    <img src="image-1.png" alt="drawing" style="width:300"/>
+
+</div>
 
 ##### Analyse
 
@@ -162,7 +170,6 @@ Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné
 │ dense_20 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">10</span>)             │         <span style="color: #00af00; text-decoration-color: #00af00">5,130</span> │
 └─────────────────────────────────┴────────────────────────┴───────────────┘
 </pre>
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">407,050</span> (1.55 MB)
 </pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">407,050</span> (1.55 MB)
@@ -179,7 +186,10 @@ Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes 
 
 ##### Graphique de l'Historique d'Entraînement
 
-![alt text](image-5.png)
+<div style="text-align:center">
+    <img src="image-5.png" alt="drawing" style="width:300"/>
+
+</div>
 
 ##### Performances
 
@@ -187,7 +197,11 @@ Test score: 0.07116231322288513
 
 Test accuracy: 0.9797999858856201
 
-![alt text](image-4.png)
+<div style="text-align:center">
+    <img src="image-4.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Analyse 
 
@@ -255,7 +269,11 @@ Pour calculer ces poids manuellement, on peut procéder couche par couche.
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 535'818 poids.
 
 ##### Graphique de l'historique d'entraînement
-![alt text](image-3.png)
+<div style="text-align:center">
+    <img src="image-3.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 
@@ -263,7 +281,10 @@ Test score: 0.07027491182088852
 
 Test accuracy: 0.9817000031471252
 
-![alt text](image-2.png)
+<div style="text-align:center">
+    <img src="image-2.png" alt="drawing" style="width:300"/>
+
+</div>
 
 ##### Analyse
 
@@ -276,8 +297,9 @@ On constate dans la matrice de confusion que le modèle a toujours du mal avec l
 Ce dernier modèle est le modèle sélectionné pour la première expérience.
 
 ### Digit recognition from features of the input data
-Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Cette fois, au lieu d'utiliser les images de 28x28 pixels comme inputs, nous calculons 
-les caractéristiques de l'histogramme des gradients (HOG) de parties de l'image et utilisons ces caractéristiques comme inputs pour le réseau de neurones.
+Dans cet exercice, nous entraînons un réseaux de neurones en utilisant les données brutes des pixels de la base de données MNIST. Cette fois, au lieu d'utiliser les images de 28x28 pixels comme inputs, nous calculons les caractéristiques de l'histogramme des gradients (HOG) de parties de l'image et utilisons ces caractéristiques comme inputs pour le réseau de neurones.
+
+La taille des inputs des modèles dépend du nombre d'orientations choisies pour le HOG. Le premier modèle a donc une taille d'input de 392 et les deux derniers une taille d'input de 784. es sorties possibles sont les chiffres de 0 à 9, ce qui correspond à une taille d'output de 10.  
 
 #### Modèle 1
 
@@ -327,7 +349,12 @@ Pour calculer ces poids manuellement, on peut procéder couche par couche.
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 25'802 poids.
 
 ##### Graphique de l'historique d'entraînement
-![alt text](image-6.png)
+
+<div style="text-align:center">
+    <img src="image-6.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 
@@ -335,7 +362,12 @@ Test score: 0.09391739219427109
 
 Test accuracy: 0.9775999784469604
 
-![alt text](image-7.png)
+<div style="text-align:center">
+    <img src="image-7.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 
@@ -398,14 +430,24 @@ Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes 
 
 ##### Graphique de l'historique d'entraînement
 
-![alt text](image-9.png)
+<div style="text-align:center">
+    <img src="image-9.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Performances
 Test score: 0.07377872616052628
 
 Test accuracy: 0.9793999791145325
 
-![alt text](image-10.png)
+<div style="text-align:center">
+    <img src="image-10.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 
@@ -441,20 +483,24 @@ En contrepartie, nous avons baissé le nombre d'epochs de 20 à 10 pour minimise
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
-_________________________________________________________________
- Layer (type)                Output Shape              Param #   
-=================================================================
- dense_19 (Dense)            (None, 128)               100480    
-                                                                 
- dropout_9 (Dropout)         (None, 128)               0         
-                                                                 
- dense_20 (Dense)            (None, 10)                1290      
-                                                                 
-=================================================================
-Total params: 101,770
-Trainable params: 101,770
-Non-trainable params: 0
-_________________________________________________________________
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)            │       <span style="color: #00af00; text-decoration-color: #00af00">100,480</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)            │             <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">10</span>)             │         <span style="color: #00af00; text-decoration-color: #00af00">1,290</span> │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">101,770</span> (397.54 KB)
+</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">101,770</span> (397.54 KB)
+</pre>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+
 
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
 - Pour la première couche: (784 * 128) + 128 = 100'480, où hog_size = 784
@@ -465,7 +511,12 @@ Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes 
 
 ##### Graphique de l'historique d'entraînement
 
-![alt text](image-11.png)
+<div style="text-align:center">
+    <img src="image-11.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Performances
 
@@ -473,7 +524,12 @@ Test score: 0.061707451939582825
 
 Test accuracy: 0.9807999730110168
 
-![alt text](image-12.png)
+<div style="text-align:center">
+    <img src="image-12.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 
@@ -488,6 +544,8 @@ Ce modèle est le meilleur que nous avons créé pour la deuxième expérience, 
 ### Convolutional neural network digit recognition
 
 Dans cet exercice, nous allons entraîner un réseau de neurones convolutif capable de déterminer automatiquement les features pertinentes pour reconnaître les chiffre de 0 à 9.
+
+Tous les modèles ci-dessous utilisent les pixels d'images de taille 28x28 et de profondeur 1 en tant qu'input, ce qui représente une taille d'input de 784. Les sorties possibles sont les chiffres de 0 à 9, ce qui correspond à une taille d'output de 10.  
 
 #### Modèle 1
 
@@ -522,8 +580,6 @@ Pour ce premier modèle, nous avons décidé d'augmenter le nombre de filtres de
 ##### Poids du Modèle
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "functional_5"</span>
-</pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -550,34 +606,6 @@ Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné
 </pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
-
-Model: "model_1"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #   
-=================================================================
- l0 (InputLayer)             [(None, 28, 28, 1)]       0         
-                                                                 
- l1 (Conv2D)                 (None, 28, 28, 32)        160       
-                                                                 
- l2 (Conv2D)                 (None, 28, 28, 32)        4128      
-                                                                 
- l3 (Conv2D)                 (None, 28, 28, 32)        4128      
-                                                                 
- l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
-                                                                 
- flat (Flatten)              (None, 6272)              0         
-                                                                 
- l4 (Dense)                  (None, 64)                401472    
-                                                                 
- l5 (Dense)                  (None, 10)                650       
-                                                                 
-=================================================================
-Total params: 410,538
-Trainable params: 410,538
-Non-trainable params: 0
-
-
-_________________________________________________________________
 
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
 
@@ -617,7 +645,11 @@ Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes 
 
 ##### Graphique de l'historique d'entraînement
 
-![alt text](image-13.png)
+<div style="text-align:center">
+    <img src="image-13.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 
@@ -625,7 +657,12 @@ Test score: 0.04008874669671059
 
 Test accuracy: 0.9872000217437744
 
-![alt text](image-14.png)
+<div style="text-align:center">
+    <img src="image-14.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 
@@ -671,34 +708,6 @@ Dans ce second modèle, nous avons augmenté le nombre de neurones de la couche 
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
-Model: "model_10"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #   
-=================================================================
- l0 (InputLayer)             [(None, 28, 28, 1)]       0         
-                                                                 
- l1 (Conv2D)                 (None, 28, 28, 32)        160       
-                                                                 
- l2 (Conv2D)                 (None, 28, 28, 32)        4128      
-                                                                 
- l3 (Conv2D)                 (None, 28, 28, 32)        4128      
-                                                                 
- l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
-                                                                 
- flat (Flatten)              (None, 6272)              0         
-                                                                 
- l4 (Dense)                  (None, 128)               802944    
-                                                                 
- dropout_7 (Dropout)         (None, 128)               0         
-                                                                 
- l5 (Dense)                  (None, 10)                1290      
-                                                                 
-=================================================================
-Total params: 812,650
-Trainable params: 812,650
-Non-trainable params: 0
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "functional_11"</span>
-</pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -765,12 +774,15 @@ Pour calculer ces poids manuellement, on peut procéder couche par couche.
     - Taille de l'entrée : 128 (sortie de la couche l4_drop)
     - Nombre de poids : (128 * 10) + 10 (biais) = 1290
 
-
 Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes les couches, ce qui nous done 812'650 poids.
 
 ##### Graphique de l'historique d'entraînement
 
-![alt text](image-15.png)
+<div style="text-align:center">
+    <img src="image-15.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 
@@ -778,7 +790,12 @@ Test score: 0.0349692776799202
 
 Test accuracy: 0.988099992275238
 
-![alt text](image-16.png)
+<div style="text-align:center">
+    <img src="image-16.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 
@@ -824,33 +841,6 @@ Pour ce dernier modèle, nous avons décidé d'augmenter la taille des filtres d
 
 Vous trouverez ci-dessous le résumé des poids et paramètres du modèle donné par la méthode `model.summary()` de `Keras`.
 
-_________________________________________________________________
- Layer (type)                Output Shape              Param #   
-=================================================================
- l0 (InputLayer)             [(None, 28, 28, 1)]       0         
-                                                                 
- l1 (Conv2D)                 (None, 28, 28, 32)        832       
-                                                                 
- l2 (Conv2D)                 (None, 28, 28, 32)        25632     
-                                                                 
- l3 (Conv2D)                 (None, 28, 28, 32)        25632     
-                                                                 
- l3_mp (MaxPooling2D)        (None, 14, 14, 32)        0         
-                                                                 
- flat (Flatten)              (None, 6272)              0         
-                                                                 
- l4 (Dense)                  (None, 128)               802944    
-                                                                 
- dropout_9 (Dropout)         (None, 128)               0         
-                                                                 
- l5 (Dense)                  (None, 10)                1290      
-                                                                 
-=================================================================
-Total params: 856,330
-Trainable params: 856,330
-Non-trainable params: 0
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "functional_9"</span>
-</pre>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -878,11 +868,7 @@ Non-trainable params: 0
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
-_________________________________________________________________
-
 Pour calculer ces poids manuellement, on peut procéder couche par couche.
-
-
 
 - Couche de convolution l1 :
     - Nombre de filtres : 32
@@ -922,7 +908,11 @@ Pour avoir le nombre total de poids, on additionne le nombre de poids de toutes 
 
 ##### Graphique de l'historique d'entraînement
 
-![alt text](image-19.png)
+<div style="text-align:center">
+    <img src="image-19.png" alt="drawing" style="width:300"/>
+
+</div>
+
 
 ##### Performances
 
@@ -930,7 +920,12 @@ Test score: 0.02639828249812126
 
 Test accuracy: 0.9921000003814697
 
-![alt text](image-20.png)
+<div style="text-align:center">
+    <img src="image-20.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
 
 ##### Analyse
 Comme pour le modèle précédent, le training history plot est très bon. Il n'y a pas d'overfitting. La courbe de training est encore en train de baisser légèrement mais entraîner le modèle plus longtemps aurait amené de l'overfitting.
@@ -946,17 +941,12 @@ Ce modèle est le meilleur que nous ayons eu, toutes expériences condondues et 
 ## Partie 3
 
 ### Les modèles CNN sont plus profonds (ont plus de couches), ont-ils plus de poids que les modèles shallow?
-En général, les réseaux de neurones convolutifs plus profonds ont tendance à avoir plus de poids que les modèles shallow. Cela est dû au fait que les CNN plus profonds ont généralement un plus grand nombre de couches, et chaque couche est composée de plusieurs filtres qui contiennent des poids.
-
-### Exemple
-# A VERIFIER CEST FAIT PAR CLAUDE
-
-Supposons que nous ayons un CNN superficiel avec une seule couche de convolution suivie d'une couche entièrement connectée. La couche de convolution a 16 filtres de taille 3x3, et la couche entièrement connectée a 128 neurones. Dans ce cas, le nombre de poids dans la couche de convolution serait de 16 * (3 * 3) = 144, et le nombre de poids dans la couche entièrement connectée serait (16 * 3 * 3) * 128 = 73 728. Ainsi, le nombre total de poids dans le CNN superficiel serait de 73 728 + 144 = 73 872.
-
-Maintenant, considérons un CNN plus profond avec trois couches de convolution, chacune suivie d'une couche de mise en commun (pooling), puis d'une couche entièrement connectée. Chaque couche de convolution a 32 filtres de taille 3x3, et la couche entièrement connectée a 256 neurones. Dans ce cas, le nombre de poids dans chaque couche de convolution serait de 32 * (3 * 3) = 288, et le nombre de poids dans la couche entièrement connectée serait (32 * 3 * 3) * 256 = 294 912. Ainsi, le nombre total de poids dans le CNN plus profond serait (288 * 3) + 294 912 = 295 776.
+En général, les réseaux de neurones convolutifs plus profonds ont tendance à avoir plus de poids que les modèles shallow. Cela est dû au fait que les CNN plus profonds ont généralement un plus grand nombre de couches, et chaque couche de convolution est composée de plusieurs filtres qui contiennent des poids. Cependant, cette observation n'est pas toujours vraie et dépend de la configuration spécifiques des modèles. Par exemple, si on a un modèle shallow avec plusieurs couches et beaucoup de neurones, il peut avoir plus de poids qu'un modèle CNN avec une seule couche de convolution qui utilise des filtres de petite taille. Nous pouvons d'ailleu dans les modèles que nous avons entraînés pour ce laboratoire, le troisième modèle de la première expérience qui est un modèle shallow a en total 535,818 poids, alors que le premier modèle la troisième expérience qui est un CNN profond a en total 410,538 poids. 
 
 ## Partie 4
-Pour reproduire l'architecture demandé nous avons utilisé le code suivant :
+### Modèle
+Pour reproduire l'architecture demandée nous avons utilisé le code suivant :
+
 ```python
 from tensorflow.keras import (
     layers,
@@ -970,9 +960,6 @@ from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 # Define CNN model
 input = layers.Input((IMG_HEIGHT, IMG_WIDTH, 1))
 
-# TODO: Complete this in order to have the same architecture
-# as the one represented in the cell above
-# note: use convolutions with relu and kernel size of 3.
 conv_1 = Conv2D(8, (3, 3), padding='same', activation='relu', name='conv_1')(input)
 max_pooling_1 = MaxPooling2D(pool_size=(2, 2), name='max_pooling_1')(conv_1)
 
@@ -990,10 +977,8 @@ max_pooling_5 = MaxPooling2D(pool_size=(2, 2), name='max_pooling_5')(conv_5)
 
 flatten_7 = Flatten(name='flatten_7')(max_pooling_5)
 
-
 dense_21 = Dense(32, activation='relu', name='dense_21')(flatten_7)
 dense_22 = Dense(16, activation='relu', name='dense_22')(dense_21)
-
 
 cnn_output = layers.Dense(1, activation='sigmoid')(dense_22)
 cnn = Model(inputs=input, outputs=cnn_output)
@@ -1001,7 +986,7 @@ cnn = Model(inputs=input, outputs=cnn_output)
 # Compile CNN model
 cnn.compile(optimizer=optimizers.Adam(0.001), loss=losses.BinaryCrossentropy(), metrics=['accuracy'])
 ```
-On vérifier que cela correspond bien à ce qui est demandé avec le code suivant :
+On vérifie que cela correspond bien à ce qui est demandé avec le code suivant :
 ```python
 from tensorflow.keras.utils import plot_model
 
@@ -1009,22 +994,64 @@ from tensorflow.keras.utils import plot_model
 plot_model(cnn, show_shapes=True, show_layer_names=True)
 ```
 Qui donne le résultat suivant : 
-![alt text](image-21.png)
+<div style="text-align:center">
+    <img src="image-21.png" alt="drawing" style="width:300"/>
+
+</div>
+
+### Graphiques de l'historique d'entraînement
 
 Après entraînement, on trouve les valeurs suivantes d'accuracy et de loss dans l'historique du training :
-![alt text](image-22.png)
-![alt text](image-23.png)
 
-Pour les prédictions de la validation on a la matrice de confusion suivante :
-![alt text](image-24.png)
-Et on trouve
+#### Loss
+<div style="text-align:center">
+    <img src="image-22.png" alt="drawing" style="width:300"/>
 
-f1 score : 1.0
+</div>
 
-accuracy : 1.0
+#### Accuracy
 
-Pour les prédictions sur le set de test on a la matrice de confusion suivante :
-![alt text](image-25.png)
+<div style="text-align:center">
+    <img src="image-23.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
+### Performances
+
+#### Sur la validation
+Pour les prédictions de la validation on obtient la matrice de confusion suivante :
+
+<div style="text-align:center">
+    <img src="image-24.png" alt="drawing" style="width:300"/>
+
+</div>
+
+
+Et on trouve :
+
+- f1 score : 1.0
+- accuracy : 1.0
+
+#### Sur le test
+Pour les prédictions sur le set de test on obtient la matrice de confusion suivante :
+<div style="text-align:center">
+    <img src="image-25.png" alt="drawing" style="width:300"/>
+
+</div>
+
 Et on trouve : 
-f1 score : 0.8606465997770346
-accuracy : 0.7996794871794872
+- f1 score : 0.8606465997770346
+- accuracy : 0.7996794871794872
+
+### Discussion des résultats
+
+On voit que le résultat de la validation est excellent. En effet, nous avons un F1-score de 1 et une accuracy de 100%. Ce résultat peut impliquer que le dataset de training est très représentatif du dataset de validation et que le modèle arrive bien à capturer les motifs présents dans la dataset de validation. Le modèle généralise extrêmement bien sur le dataset de validation. On notera aussi que le dataset de validation ne contient que 16 données; 8 données représentant des poumons atteints de pneumonie et 8 données représentant des poumons normaux. La taille de ce dataset est donc très petite et on peut donc imaginer que le CNN arrive facilement à adapter ses poids pour avoir de très bonnes performances sur ces 16 données. Ces bonnes performances sur la validation n'implique donc pas forcément que les performances seront aussi bonne sur le dataset de test.   
+
+En ce qui concerne les performances sur le set de test, elles sont significativement moins bonnes. On voit que le modèle est très bons pour détecter la pneumonie, mais n'est pas très fiable lorsque les poumons sont sains. Il peut y avoir plusieurs raisons à cela. Premièrement, comme expliqué ci-dessus, le set de validation est potentiellement trop simple. Si cela est le cas, le modèle aura du mal à généraliser, comme nous pouvons le constater ici. De plus, si on s'intéresse au dataset d'entraînement, on remarque qu'il contient en tout 5856 données. Parmi celles-ci, 1341 sont des données provenant de poumons normaux et les 3875 données restantes de poumons atteints de pneumonie. On constate donc que le dataset d'entraînement n'est pas tout à fait équilibré, il y a presque trois fois plus de données représentant des poumons atteints de pneumonie. Le fait que dans le set d'entraînement les poumons sains soient sous représentés peut expliquer le fait que le modèle ait plus de peine à classifier les poumons sains. En effet, le modèle n'a probablement pas pu apprendre aussi bien les features des poumons normaux que celles des poumons atteints de pneumonie. D'un point de vue plus humain, on peut tout de même conclure que le modèle est plutôt bon pour remplir son but premier qui est de détcter les pneumomies. En effet, dans ce contexte, avoir des faux positifs (= des gens diagnostiqués malades alors qu'ils ne le sont pas) est nettement moins grave qu'avoir des faux négatifs (= des gens diagnostiqués sains, alors qu'ils sont malade) pour la classe `pneumonie`. Vous trouverez ci-dessous des graphes de la répartition des données d'entraînement :
+
+<div style="display: flex; justify-content: center;">
+    <img src="image-26.png" alt="drawing" style="width:300px; margin-right: 10px;">
+    <img src="image-27.png" alt="drawing" style="width:300px;">
+</div>
+
